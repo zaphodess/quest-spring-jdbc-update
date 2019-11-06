@@ -33,7 +33,7 @@ public class WizardController {
                              @RequestParam(required = false, defaultValue = "") String biography,
                              @RequestParam(required = false, defaultValue = "false") boolean muggle
     ) {
-        model.addAttribute("wizard", repository.save(id, firstName, lastName,
+        model.addAttribute("wizard", repository.update(id, firstName, lastName,
                 birthday, birthPlace, biography, muggle));
 
         return "wizard_get";

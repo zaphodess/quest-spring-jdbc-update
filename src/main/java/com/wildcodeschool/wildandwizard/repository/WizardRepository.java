@@ -10,8 +10,8 @@ public class WizardRepository {
     private final static String DB_USER = "h4rryp0tt3r";
     private final static String DB_PASSWORD = "Horcrux4life!";
 
-    public Wizard save(Long id, String firstName, String lastName, Date birthday,
-                       String birthPlace, String biography, boolean muggle) {
+    public Wizard update(Long id, String firstName, String lastName, Date birthday,
+                         String birthPlace, String biography, boolean muggle) {
 
         try {
             Connection connection = DriverManager.getConnection(
