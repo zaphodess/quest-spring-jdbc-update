@@ -1,8 +1,14 @@
 package com.wildcodeschool.wildandwizard.repository;
 
-import com.wildcodeschool.wildandwizard.entity.Wizard;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import java.sql.*;
+import com.wildcodeschool.wildandwizard.entity.Wizard;
+import com.wildcodeschool.wildandwizard.util.JdbcUtils;
 
 public class WizardRepository {
 
@@ -13,11 +19,13 @@ public class WizardRepository {
     public Wizard update(Long id, String firstName, String lastName, Date birthday,
                          String birthPlace, String biography, boolean muggle) {
 
+        Connection connection = null;
+        PreparedStatement statement = null;
         try {
-            Connection connection = DriverManager.getConnection(
+            connection = DriverManager.getConnection(
                     DB_URL, DB_USER, DB_PASSWORD
             );
-            PreparedStatement statement = connection.prepareStatement(
+            statement = connection.prepareStatement(
                     "UPDATE wizard SET first_name=?, last_name=?, birthday=?, birth_place=?, biography=?, is_muggle=? WHERE id=?"
             );
             statement.setString(1, firstName);
@@ -35,21 +43,27 @@ public class WizardRepository {
                     birthPlace, biography, muggle);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            JdbcUtils.closeStatement(statement);
+            JdbcUtils.closeConnection(connection);
         }
         return null;
     }
 
     public Wizard findById(Long id) {
 
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
         try {
-            Connection connection = DriverManager.getConnection(
+            connection = DriverManager.getConnection(
                     DB_URL, DB_USER, DB_PASSWORD
             );
-            PreparedStatement statement = connection.prepareStatement(
+            statement = connection.prepareStatement(
                     "SELECT * FROM wizard WHERE id = ?;"
             );
             statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
                 String firstName = resultSet.getString("first_name");
@@ -62,6 +76,10 @@ public class WizardRepository {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            JdbcUtils.closeResultSet(resultSet);
+            JdbcUtils.closeStatement(statement);
+            JdbcUtils.closeConnection(connection);
         }
         return null;
     }
